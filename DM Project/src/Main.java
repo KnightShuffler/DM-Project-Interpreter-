@@ -8,11 +8,14 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		try {
-			 ImageReader img = new ImageReader("./Hello World.png");
-			 Interpreter i = new Interpreter(img);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		FileInputGUI fgui=new FileInputGUI();
+		fgui.setVisible(true);
+//		try {
+//		
+//			 ImageReader img = new ImageReader("./Hello World.png");
+//			 Interpreter i = new Interpreter(img);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 }
