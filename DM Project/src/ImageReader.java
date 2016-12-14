@@ -9,6 +9,7 @@ public class ImageReader {
 	public final int width;
 	public final int height;
 
+	// The integer array to be passed on
 	public final int[][] pixels;
 
 	public ImageReader(String file) throws IOException {
@@ -18,8 +19,6 @@ public class ImageReader {
 		width = bi.getWidth();
 		height = bi.getHeight();
 
-//		 System.out.println("width, height: " + width + " " + height);
-
 		int[] rawPixels = new int[width * height];
 		rawPixels = bi.getRGB(0, 0, width, height, null, 0, width);
 		// Creates the Pixel object array
@@ -28,9 +27,6 @@ public class ImageReader {
 			for (int j = 0; j < width; j++) {
 				// Fills the array with the respective pixels
 				pixels[i][j] = rawPixels[i * width + j];
-				// System.out.format("Row %02d, Column %02d: ", j+1, i+1);
-				// System.out.println(p.toString());
-				// System.out.println();
 			}
 		}
 	}

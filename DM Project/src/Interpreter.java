@@ -3,43 +3,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Stack;
 
-class ProgramParseState {
-	// Which pixel the parser is on
-	public int X, Y;
-	// Which direction the parser is reading in:
-	// 0 - Right, 1 - Up, 2 - Left, 3 - Down
-	public byte dir;
-
-	public ProgramParseState() {
-		X = Y = dir = 0;
-	}
-
-	public ProgramParseState(int x, int y, byte d) {
-		X = x;
-		Y = y;
-		dir = d;
-	}
-
-	public ProgramParseState(ProgramParseState p) {
-		this.X = p.X;
-		this.Y = p.Y;
-		this.dir = p.dir;
-	}
-
-	public String getPosition() {
-		return String.format("(%d, %d)", X + 1, Y + 1);
-	}
-	
-	public void displayState() {
-		System.out.println("Position: " + getPosition());
-		System.out.println("Direction: " + dir);
-	}
-
-	public final static byte DIR_RIGHT = 0;
-	public final static byte DIR_UP = 1;
-	public final static byte DIR_LEFT = 2;
-	public final static byte DIR_DOWN = 3;
-}
 
 public class Interpreter {
 	// The coordinates of the pixel of the image that the program parser is on
@@ -113,11 +76,13 @@ public class Interpreter {
 	private void runInterpreter(int[][] pixels) throws IOException {
 		boolean done = false;
 		boolean debug = false;
+		StringBuilder consoleOutput = new StringBuilder();
+		// Used for debugging step by step
 		String l;
 		while (!done) {
 			if (debug)
 				l = br.readLine();
-			
+
 			int currentPixel = pixels[programState.Y][programState.X] & 0x00ffffff;
 			if (debug)
 				programState.displayState();
@@ -140,28 +105,28 @@ public class Interpreter {
 				tape[head]++;
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("INC");
+					System.out.println("INC");
 				break;
 
 			case DEC:
 				tape[head]--;
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("DEC");
+					System.out.println("DEC");
 				break;
 
 			case ADD:
 				AC += tape[head];
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("ADD");
+					System.out.println("ADD");
 				break;
 
 			case SUB:
 				AC -= tape[head];
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("SUB");
+					System.out.println("SUB");
 				break;
 
 			case MUL:
@@ -171,7 +136,7 @@ public class Interpreter {
 
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("MUL");
+					System.out.println("MUL");
 				break;
 
 			case DIV:
@@ -180,63 +145,63 @@ public class Interpreter {
 
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("DIV");
+					System.out.println("DIV");
 				break;
 
 			case AND:
 				AC &= tape[head];
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("AND");
+					System.out.println("AND");
 				break;
 
 			case OR:
 				AC |= tape[head];
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("OR");
+					System.out.println("OR");
 				break;
 
 			case NOT:
 				AC = (byte) ~tape[head];
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("NOT");
+					System.out.println("NOT");
 				break;
 
 			case XOR:
 				AC ^= tape[head];
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("XOR");
+					System.out.println("XOR");
 				break;
 
 			case LAC:
 				AC = tape[head];
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("LAC");
+					System.out.println("LAC");
 				break;
 
 			case SAC:
 				tape[head] = AC;
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("SAC");
+					System.out.println("SAC");
 				break;
 
 			case LMQ:
 				MQ = tape[head];
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("LMQ");
+					System.out.println("LMQ");
 				break;
 
 			case SMQ:
 				tape[head] = MQ;
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("SMQ");
+					System.out.println("SMQ");
 				break;
 
 			case BSTART:
@@ -250,7 +215,7 @@ public class Interpreter {
 					updateProgramCoordinates();
 				}
 				if (debug)
-				System.out.println("BSTART");
+					System.out.println("BSTART");
 				break;
 
 			case BEND:
@@ -261,26 +226,26 @@ public class Interpreter {
 					programState = new ProgramParseState(blockAddresses.peek());
 				}
 				if (debug)
-				System.out.println("BEND");
+					System.out.println("BEND");
 				break;
 
 			case RCW:
 				programState.dir = (byte) (programState.dir == 0 ? 3 : programState.dir - 1);
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("RCW");
+					System.out.println("RCW");
 				break;
 
 			case RCCW:
 				programState.dir = (byte) ((programState.dir + 1) % 4);
 				updateProgramCoordinates();
 				if (debug)
-				System.out.println("RCCW");
+					System.out.println("RCCW");
 				break;
 
 			case IN:
 				if (debug)
-				System.out.println("IN");
+					System.out.println("IN");
 				if (consoleInput.length() == 0) {
 					consoleInput.append(br.readLine());
 				}
@@ -293,23 +258,23 @@ public class Interpreter {
 			case OUT:
 				if (debug) {
 					System.out.print("OUT ");
-					System.out.println((char)(tape[head] & 0xff));
+					System.out.println((char) (tape[head] & 0xff));
 				} else {
-					System.out.print((char)(tape[head] & 0xff));
+					System.out.print((char) (tape[head] & 0xff));
 				}
 				updateProgramCoordinates();
-				
+
 				break;
 
 			case END:
 				done = true;
 				if (debug)
-				System.out.println("END");
+					System.out.println("END");
 				break;
 
 			case COMMENT:
 				if (debug)
-				System.out.println("COMMENT");
+					System.out.println("COMMENT");
 				break;
 
 			default:
@@ -317,17 +282,17 @@ public class Interpreter {
 						pixels[programState.X][programState.Y], programState.getPosition()));
 			}
 			if (debug)
-			this.debug();
+				this.debug();
 		}
-//		System.out.println();
-//		this.debug();
+		// System.out.println();
+		// this.debug();
 	}
-	
+
 	private void debug() {
 		System.out.println("head: " + head);
 		System.out.println("AC: " + (AC & 0xff));
 		System.out.println("MQ: " + (MQ & 0xff));
-		for (int i = 0; i <=13; i++) {
+		for (int i = 0; i <= 13; i++) {
 			System.out.println("C" + i + ": " + (tape[i] & 0xff));
 		}
 		System.out.println();
