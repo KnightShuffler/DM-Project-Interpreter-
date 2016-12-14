@@ -76,7 +76,6 @@ public class Interpreter {
 	private void runInterpreter(int[][] pixels) throws IOException {
 		boolean done = false;
 		boolean debug = false;
-		StringBuilder consoleOutput = new StringBuilder();
 		// Used for debugging step by step
 		String l;
 		while (!done) {
